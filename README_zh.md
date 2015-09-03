@@ -1,7 +1,7 @@
 開始使用 - Android
 =
 
-### 安裝 Neioo SDK
+### 安裝 Neioo SDK   
 Neioo SDK 需要 Android 4.3 以上，支援 BLE 的裝置才可以正常運作。
 
 #### Android Studio 使用者
@@ -50,12 +50,12 @@ Neioo 的一切事件都定義在 Cloud 上，所以安裝完 SDK 之後，我�
 
 ##### 2. 建立 Space
 Space 代表一個場域，也是事件的容器。要辦活動得先有場地才行。  
-在 Space 頁面點擊 `Add Space` 按鈕可以看到畫面如下
+在 Space 頁面點擊 `Add Space` 按鈕可以看到畫面如下   
 ![](/screenshot/space_settings.png)
 
 ##### 3. 建立 Action
 Action  就是 Neioo SDK 在事件觸發時該做的動作，Neioo 定義了 10 種類別。  
-在 Action 頁面點擊 `Add Action` 按鈕可以看到畫面如下
+在 Action 頁面點擊 `Add Action` 按鈕可以看到畫面如下   
 ![](/screenshot/show_image.png)  
 這裏我們先建一個 type 為 `Show Image on user's App` 的 Action 來練習。  
 
@@ -74,7 +74,7 @@ Campaign 就是一個觸發事件，定義了觸發的 Beacon、距離、時間.
 在 Space 按下 `Add Campaign to Space` 按鈕會看到這樣的畫面：  
 ![](/screenshot/add_campaign01.png)  
 
-* 在 Activate beacons 選擇事件由哪顆 Beacon 觸發，就指定之前登錄的 `Demo Beacon`
+* 在 Activate beacons 選擇事件由哪顆 Beacon 觸發，就指定之前登錄的 `Demo Beacon`   
 * 設定 Trigger Proximity ，表示事件將在距離 Beacon 多近時觸發，有近、中、遠三種可以選
 * 設定 Repeat Setting ，表示事件是否可以重複觸發。如果設定為重複觸發的話，可以設定兩次觸發之間必須間隔多久時間
 * 在 Activate actions 選擇觸發時要做什麼 Action，指定剛才建立的 `Show Image`
@@ -85,7 +85,7 @@ Campaign 就是一個觸發事件，定義了觸發的 Beacon、距離、時間.
 
 ##### 2. 實作 NeiooCallback - 進出 Space 的事件
 現在回到 Android 專案上，實作 Neioo 的事件接口 - NeiooCallback。包含了五個回調函式：
-```
+```java
 NeiooCallback neiooCallback = new NeiooCallback() {
     @Override
     public void onCampaignTriggered(NeiooBeacon neiooBeacon, NeiooCampaign neiooCampaign) {
@@ -112,7 +112,7 @@ NeiooCallback neiooCallback = new NeiooCallback() {
 這裏先忽略 `inShakeRange()`和 `outShakeRange()`，之後的實作會提到。  
 `onEnterSpace()` 會在裝置已經正確取得 Space 的資料時被呼叫，表示 SDK 已經準備好觸發這個 Space 的事件了。  
 我們可以在 `onEnterSpace()` 和 `onExitSpace()` 用 Toast 來提示使用者，修改一下 neiooCallback。  
-```
+```java
 @Override
 public void onEnterSpace(final NeiooSpace neiooSpace) {
     runOnUiThread(new Runnable() {
@@ -136,9 +136,9 @@ public void onExitSpace(final NeiooSpace neiooSpace) {
 特別注意 NeiooCallback 的回調函式都不是在 UI 線程上被調用，所以跟 UI 相關的任務，別忘了用 `runOnUiThread()` 或是 `Handler.post()` 來執行。
 
 ##### 3. 實作 NeiooCallback - Campaign 觸發的事件
-當有事件觸發時， NeiooCallback 的 `onCampaignTriggered()` 就會被呼叫，並回傳 NeiooCampagin 物件，包含了你在 Neioo Cloud 上定義的所有資訊；還有觸發 Campaign 的 Beacon，封裝在 NeiooBeacon 裡。
+當有事件觸發時， NeiooCallback 的 `onCampaignTriggered()` 就會被呼叫，並回傳 NeiooCampagin 物件，包含了你在 Neioo Cloud 上定義的所有資訊；還有觸發 Campaign 的 Beacon，封裝在 NeiooBeacon 裡。     
 可以用 NeiooCampagin.getActions() 取得 Campaign 需要做的 Action，並做出反應。修改一下 neiooCallback：
-```
+```java
 @Override
 public void onCampaignTriggered(NeiooBeacon neiooBeacon, NeiooCampaign neiooCampaign) {
     for(NeiooAction action : neiooCampaign.getActions()){
@@ -164,7 +164,7 @@ Neioo 採獨體模式(Singleton)設計，只能透過 Neioo.setUp() 取得實體
 * NeiooCallback  
 就傳入我們前兩個步驟寫的 neiooCallback 吧
 
-```
+```java
 try {
     Neioo neioo = Neioo.setUp(context,"YourAppKey",neiooCallback);
     neioo.enable();
@@ -199,7 +199,7 @@ Criteria 就是判斷標準，按上面 `18禁` 的例子來建立就會像這�
 ##### 3. 提供 Neioo 標準資料
 Cloud 的設定完成之後，回到 Android 專案。Neioo SDK 必須靠 App 主動提供當前用戶的數值，才有足夠的資料判斷用戶是不是符合 Criteria。所以在設計 Criteria 時，必須考慮到你的 App 是不是能取得對應的資料。  
 假設我們的 App 要求使用者輸入年齡才能開始，且當前使用的是一個 13 歲的用戶。在輸入完後就用 `Neioo.addCriteriaData()` 來提供資料給 Neioo 像這樣：
-```
+```java
 neioo.addCriteriaData("age","13");
 ```
 
@@ -219,7 +219,7 @@ Campaign 的基本屬性同上兩節所寫。要使 Campaign 具備藉由搖一�
 
 ##### 2. 實作 NeiooCallback - 進出「搖一搖」範圍的事件
 為了適時提醒使用者何時該搖手機， NeiooCallback 提供了 `inShakeRange()`和 `outShakeRange()` 兩個回調函式，會在進入/離開搖一搖屬性的 Campaign 時被呼叫。我們一樣用 Toast 來提醒使用者像這樣：
-```
+```java
 @Override
 public void inShakeRange(final NeiooCampaign neiooCampaign) {
     runOnUiThread(new Runnable() {
@@ -246,7 +246,7 @@ Neioo 只能告訴你搖晃時會觸發什麼事件，不會主動偵測搖晃�
 
 ##### 4. 取得搖晃時應觸發的 Campaign
 現在我們得以判斷裝置是不是正在搖晃，假設上面的搖晃偵測者有個 `OnShake()` 的 callback，表示搖晃發生。我們就必須在 `OnShake()` 裡使用 `Neioo.getShakeCampaigns()` ，Neioo 將直接返回應觸發的 Campaign。
-```
+```java
 @Override
 public void onShake() {
     for (NeiooCampaign campaign : neioo.getShakeCampaigns()) {

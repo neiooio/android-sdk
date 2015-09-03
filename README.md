@@ -87,7 +87,7 @@ You can see campaigns you created in space page
 ##### 2. Implement NeiooCallback - onEnterSpace() and onExitSpace()
 Let's back to the Android project to implements NeiooCallback.  
 NeiooCallback is the event interface of Neioo, which contains five callback methods.
-```
+```java
 NeiooCallback neiooCallback = new NeiooCallback() {
     @Override
     public void onCampaignTriggered(NeiooBeacon neiooBeacon, NeiooCampaign neiooCampaign) {
@@ -114,7 +114,7 @@ NeiooCallback neiooCallback = new NeiooCallback() {
 Please ignore `inShakeRange ()` and `outShakeRange ()` for now, it will be mentioned later.  
 `onEnterSpace()` will be called when sdk correctly get space's data, and is ready to trigger the event of this space.
 We can prompt user with Toast in `onEnterSpace ()` and `onExitSpace ()`. Let's adjust neiooCallback  
-```
+```java
 @Override
 public void onEnterSpace(final NeiooSpace neiooSpace) {
     runOnUiThread(new Runnable() {
@@ -140,7 +140,7 @@ The callback function is run in a non-UI thread. Please execute your code with H
 ##### 3. Implement NeiooCallback - onCampaignTriggered()
 `onCampaignTriggered()` will be called when campaign is triggered, and return with NeiooCampaign object which contains all the information you define on Neioo Cloud.  
 You can obtain actions of campaign with `NeiooCampaign.getActions()`. Let's adjust neiooCallback：
-```
+```java
 @Override
 public void onCampaignTriggered(NeiooBeacon neiooBeacon, NeiooCampaign neiooCampaign) {
     for(NeiooAction action : neiooCampaign.getActions()){
@@ -165,7 +165,7 @@ You can find it at the top of the space page.
 
 * NeiooCallback  
 
-```
+```java
 try {
     Neioo neioo = Neioo.setUp(context,"YourAppKey",neiooCallback);
     neioo.enable();
@@ -198,7 +198,7 @@ The difference between this campaign and previous one is that there is a light b
 ##### 3. Provide Criteria Data to SDK
 You have to provide the data of current user to Neioo sdk, thus sdk will have enough data to determine whether the user match criteria.  
 In this example, we need users to enter their age as criteria data. Assume that the current user is 13 years old.
-```
+```java
 neioo.addCriteriaData("age","13");
 ```
 
@@ -218,7 +218,7 @@ To create shake campaign, you need to set the `shake|` tag in campaign's `custom
 
 ##### 2. Implement NeiooCallback - inShakeRange() and outShakeRange()
 `inShakeRange()` and `outShakeRange()` will be called when the user is inside/outside the shake range, you can show some UI to inform the user to shake his/her phone.
-```
+```java
 @Override
 public void inShakeRange(final NeiooCampaign neiooCampaign) {
     runOnUiThread(new Runnable() {
@@ -246,7 +246,7 @@ There are many tutorials and open-source projects about it like [Seismic](https:
 
 ##### 4. Get Shake Campaign
 If the user is shaking his / her phone, `onShake()` will be called. Then we can use `Neioo.getShakeCampaigns()` to get shake campaigns directly.
-```
+```java
 @Override
 public void onShake() {
     for (NeiooCampaign campaign : neioo.getShakeCampaigns()) {
